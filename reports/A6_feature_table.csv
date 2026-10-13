@@ -1,0 +1,33 @@
+name,formula,source_columns,why
+season_avg_temp_c,mean(avg_temp_c) over the 4-month growing-season window,regional_weather.csv: avg_temp_c,mean temperature during growth is the single strongest yield driver in this dataset
+season_max_temp_c,max(avg_temp_c) over the growing-season window,regional_weather.csv: avg_temp_c,"the hottest month is what actually triggers heat stress, not the average"
+season_min_temp_c,min(avg_temp_c) over the growing-season window,regional_weather.csv: avg_temp_c,cold snaps in the coolest month suppress early growth
+season_temp_std_c,std(avg_temp_c) across the growing-season window,regional_weather.csv: avg_temp_c,a swingy season stresses the crop more than a stable one at the same mean
+season_rainfall_mm_total,sum(monthly_rainfall_mm) over the growing-season window,regional_weather.csv: monthly_rainfall_mm,water availability during growth drives yield (and is a station-side check on the self-reported rainfall_mm_season)
+season_rainfall_mm_wettest,max(monthly_rainfall_mm) over the growing-season window,regional_weather.csv: monthly_rainfall_mm,separates a well-spread season from one drowned in a single month
+season_rainfall_mm_driest,min(monthly_rainfall_mm) over the growing-season window,regional_weather.csv: monthly_rainfall_mm,"captures the driest stretch of the season, which is what drought actually damages"
+season_extreme_heat_days,sum(extreme_heat_days) over the growing-season window,regional_weather.csv: extreme_heat_days,cumulative heat stress; the second-strongest raw correlate of yield
+season_max_extreme_heat_days,max(extreme_heat_days) over the growing-season window,regional_weather.csv: extreme_heat_days,a single devastating month can dominate the seasonal total
+season_months_matched,count of growing-season months that matched a weather row,"regional_weather.csv: region, year, month",join-quality flag: a partial window means the season averages rest on fewer observations
+planting_month_temp_c,mean(avg_temp_c) in the planting month only,regional_weather.csv: avg_temp_c,germination is especially sensitive to the temperature at planting time
+planting_month_rainfall_mm,monthly_rainfall_mm in the planting month,regional_weather.csv: monthly_rainfall_mm,sowing into dry soil is a well-known cause of failed establishment
+preplant_temp_c,avg_temp_c for the month before planting,regional_weather.csv: avg_temp_c,pre-season warmth sets the soil-temperature baseline the crop starts from
+preplant_rainfall_mm,monthly_rainfall_mm for the month before planting,regional_weather.csv: monthly_rainfall_mm,pre-season soil moisture carries over into the growing season
+temp_deviation_from_region_avg,season_avg_temp_c minus that region's overall mean avg_temp_c,regional_weather.csv: avg_temp_c,captures an unusually hot or cool season relative to that region's normal climate
+temp_excess_above_threshold_c,"max(0, season_avg_temp_c - 21.0)",regional_weather.csv: avg_temp_c,notebook 02/03 show yield is flat up to about 21 C and then collapses; this makes that break explicit
+heat_stress_days_excess,"max(0, season_extreme_heat_days - 1)",regional_weather.csv: extreme_heat_days,yield drops sharply the moment a season has more than ~1 extreme-heat day; isolates that jump
+season_rain_deficit_mm,"max(0, 220 - season_rainfall_mm_total)",regional_weather.csv: monthly_rainfall_mm,yield saturates once the season has had roughly 220 mm of rain; this measures only the shortfall
+fertilizer_x_improved_seed,fertilizer_kg_per_ha times improved_seed_used,"crop_yield_train.csv: fertilizer_kg_per_ha, improved_seed_used","improved seed is believed to respond better to fertilizer, an interaction effect"
+soil_x_fertilizer,soil_quality_index times fertilizer_kg_per_ha,"crop_yield_train.csv: soil_quality_index, fertilizer_kg_per_ha",fertilizer pays off more on good soil; captures the interaction as one feature
+rainfall_x_temp,season_rainfall_mm_total times season_avg_temp_c,"regional_weather.csv: monthly_rainfall_mm, avg_temp_c",heat and water stress amplify each other (a hot season is worse when it is also dry)
+planting_month_num,planting_month mapped to 1 through 12,crop_yield_train.csv: planting_month,gives the model a numeric timing signal in addition to the raw category
+altitude_dev_from_crop_optimum_m,altitude_m minus the crop yield-weighted mean altitude (fitted on train),"crop_yield_train.csv: altitude_m, crop_type; optimum fitted on train","each crop has a narrow productive altitude band (maize low, barley/wheat high); this puts every crop on one common scale"
+altitude_dev_from_crop_optimum_sq,-1 times (altitude_dev_from_crop_optimum_m squared),derived from altitude_dev_from_crop_optimum_m,"the altitude response is a hump, not a straight line, so a squared deviation gives the model the curvature directly"
+altitude_x_season_temp,(altitude_m / 1000) times season_avg_temp_c,crop_yield_train.csv: altitude_m; regional_weather.csv: avg_temp_c,at the same station temperature a high plot and a low plot experience different heat stress; the interaction captures that
+altitude_dev_x_season_temp,altitude_dev_from_crop_optimum_m times season_avg_temp_c,derived; regional_weather.csv: avg_temp_c,a hot season hurts a plot that is already off its crop altitude optimum more than one that is on it
+temp_dev_from_crop_optimum_c,season_avg_temp_c minus the crop yield-weighted mean season temperature (fitted on train),regional_weather.csv: avg_temp_c; optimum fitted on train,crops have different temperature optima (maize/sorghum warmer than barley/wheat/teff); this measures the gap to the crop own optimum
+log_fertilizer_kg_per_ha,log1p(fertilizer_kg_per_ha),crop_yield_train.csv: fertilizer_kg_per_ha,"fertilizer response is strongly diminishing, so the log makes the useful low-rate range easier for the model to split"
+log_season_rainfall_mm_total,log1p(season_rainfall_mm_total),regional_weather.csv: monthly_rainfall_mm,the station rainfall response saturates; the log compresses the wet tail the model already handles
+fertilizer_x_labor,fertilizer_kg_per_ha times labor_days_per_ha,"crop_yield_train.csv: fertilizer_kg_per_ha, labor_days_per_ha",fertilizer only pays off if enough labour is there to apply and manage it
+soil_quality_squared,soil_quality_index squared,crop_yield_train.csv: soil_quality_index,the best soils are disproportionately more productive than a linear term implies
+seed_minus_pest,improved_seed_used minus pest_disease_flag,"crop_yield_train.csv: improved_seed_used, pest_disease_flag","combines the two binary management flags into one signed score (+1 good, -1 bad)"

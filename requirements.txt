@@ -1,0 +1,29 @@
+# Pinned environment for the Ethiopian Crop Yield & Revenue Predictor project.
+# Verified against Python 3.11.9 (Windows) with the versions below.
+#
+#   pip install -r requirements.txt
+#
+# Core data wrangling
+numpy==2.4.6
+pandas==3.0.3
+scipy==1.17.1
+
+# Modelling
+scikit-learn==1.7.2
+xgboost==3.2.0
+lightgbm==4.7.0
+catboost==1.2.10
+joblib==1.5.3
+
+# Figures and the demo app
+matplotlib==3.11.2
+seaborn==0.13.2
+plotly==6.8.0
+streamlit==1.58.0
+
+# Notebooks (run the four notebooks and export the A/B/D reports)
+jupyterlab==4.6.4
+ipykernel==7.4.0
+
+# Reading the assignment PDF (optional)
+pypdf==6.16.2

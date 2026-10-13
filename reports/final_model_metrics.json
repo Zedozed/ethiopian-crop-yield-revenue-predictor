@@ -1,0 +1,28 @@
+{
+  "team": "Zedingil Zelalem",
+  "selected_model": "catboost_log_target",
+  "encoder": "onehot",
+  "scaler": "robust",
+  "is_blend": false,
+  "blend_members": [
+    "catboost_log_target"
+  ],
+  "n_candidate_models": 18,
+  "n_combinations_tried": 108,
+  "best_params": {
+    "regressor__model__learning_rate": "0.04",
+    "regressor__model__l2_leaf_reg": "3",
+    "regressor__model__iterations": "1000",
+    "regressor__model__depth": "6"
+  },
+  "validation": {
+    "split": "80/20 random, random_state=42",
+    "RMSE": 0.421794628489709,
+    "MAE": 0.3035327209600902,
+    "R2": 0.9108881214824154
+  },
+  "cv_rmse_mean": 0.4272788519135503,
+  "cv_rmse_std": 0.009481218216390686,
+  "out_of_time_rmse": 0.4380259143163877,
+  "weather_ablation_rmse_gain": 0.014550083359062382
+}
